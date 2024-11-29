@@ -5,8 +5,8 @@ const TaskForm = ({ onAdd, loggedInUser }) => {
   const [title, setTitle] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
   const [priority, setPriority] = useState("");
+  const [status, setStatus] = useState("In-Todo"); // Default status set to "In-Todo"
 
-  // Simulated list of users for the "Assigned To" dropdown
   const users = ["Alice", "Bob", "Charlie", "David"];
 
   const handleSubmit = (e) => {
@@ -14,13 +14,15 @@ const TaskForm = ({ onAdd, loggedInUser }) => {
     if (title && assignedTo && priority) {
       onAdd({
         title,
-        assignedBy: loggedInUser, // Automatically set to the logged-in user
+        assignedBy: loggedInUser,
         assignedTo,
         priority,
+        status, // Default status "In-Todo" or user-selected value
       });
       setTitle("");
       setAssignedTo("");
       setPriority("");
+      setStatus("In-Todo"); // Reset to default after submission
     }
   };
 
@@ -65,6 +67,19 @@ const TaskForm = ({ onAdd, loggedInUser }) => {
         <MenuItem value="High">High</MenuItem>
         <MenuItem value="Medium">Medium</MenuItem>
         <MenuItem value="Low">Low</MenuItem>
+      </TextField>
+      <TextField
+        select
+        label="Status"
+        value={status}
+        onChange={(e) => setStatus(e.target.value)}
+        fullWidth
+        margin="normal"
+      >
+        <MenuItem value="In-Todo">In-Todo</MenuItem>
+        <MenuItem value="Pending">Pending</MenuItem>
+        <MenuItem value="In Progress">In Progress</MenuItem>
+        <MenuItem value="Completed">Completed</MenuItem>
       </TextField>
       <Button type="submit" variant="contained" color="primary" fullWidth>
         Add Task
