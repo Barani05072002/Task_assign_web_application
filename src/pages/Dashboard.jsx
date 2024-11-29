@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Box, Card, CardContent, Typography, Grid, IconButton, AppBar, Toolbar } from "@mui/material";
 import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
-import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import NightlightIcon from "@mui/icons-material/Nightlight";
+import WbSunnyIcon from "@mui/icons-material/WbSunny"; // Sun Icon for light mode
+import NightlightIcon from "@mui/icons-material/Nightlight"; // Moon Icon for dark mode
 import TaskList from "../components/TaskList";
 import TaskForm from "../components/TaskForm";
 
@@ -23,26 +23,15 @@ const Dashboard = () => {
     palette: {
       mode: darkMode ? "dark" : "light",
       primary: {
-        main: darkMode ? "#8e44ad" : "#6c63ff",
-      },
-      secondary: {
-        main: darkMode ? "#ff7675" : "#f39c12",
+        main: darkMode ? "#90caf9" : "#1976d2",
       },
       background: {
-        default: darkMode ? "#2c3e50" : "#ecf0f1",
-        paper: darkMode ? "#34495e" : "#ffffff",
+        default: darkMode ? "#303030" : "#fafafa",
+        paper: darkMode ? "#424242" : "#ffffff",
       },
     },
     typography: {
-      fontFamily: "'Poppins', sans-serif",
-      fontSize: 14,
-      h5: {
-        fontSize: 20,
-        fontWeight: 600,
-      },
-      body1: {
-        fontSize: 16,
-      },
+      fontFamily: "'Roboto', sans-serif",
     },
   });
 
@@ -90,16 +79,13 @@ const Dashboard = () => {
           height: "100vh",
           display: "flex",
           flexDirection: "column",
-          background: darkMode
-            ? "linear-gradient(135deg, #2c3e50, #34495e)"
-            : "linear-gradient(135deg, #6c63ff, #f39c12)",
-          color: darkMode ? "#ecf0f1" : "#2c3e50",
+          backgroundColor: darkMode ? "#303030" : "#fafafa",
         }}
       >
         {/* AppBar */}
-        <AppBar position="sticky" sx={{ background: "transparent", boxShadow: "none" }}>
+        <AppBar position="sticky">
           <Toolbar>
-            <Typography variant="h5" sx={{ flexGrow: 1 }}>
+            <Typography variant="h6" sx={{ flexGrow: 1 }}>
               Dashboard
             </Typography>
             <IconButton color="inherit" onClick={handleToggleDarkMode}>
@@ -109,18 +95,23 @@ const Dashboard = () => {
         </AppBar>
 
         {/* Main Content */}
-        <Grid container sx={{ flex: 1, height: "100%" }}>
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            width: "100%",
+            overflow: "hidden",
+          }}
+        >
           {/* Left Section: Task List */}
-          <Grid
-            item
-            xs={12}
-            md={8}
+          <Box
             sx={{
-              height: "100%",
+              flex: 2,
               overflowY: "auto",
               padding: 2,
-              backgroundColor: darkMode ? "#34495e" : "#ffffff",
-              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+              backgroundColor: darkMode ? "#424242" : "#f4f4f4",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
             <TaskList
@@ -142,27 +133,24 @@ const Dashboard = () => {
                 width: 56,
                 height: 56,
                 zIndex: 1000,
-                boxShadow: `0 4px 10px ${darkMode ? "#8e44ad" : "#6c63ff"}`,
               }}
             >
               +
             </Button>
-          </Grid>
+          </Box>
 
           {/* Right Section: Task Details */}
-          <Grid
-            item
-            xs={12}
-            md={4}
+          <Box
             sx={{
-              height: "100%",
+              flex: 1,
+              backgroundColor: darkMode ? "#303030" : "#ffffff",
               padding: 2,
-              overflowY: "auto",
-              backgroundColor: darkMode ? "#2c3e50" : "#ffffff",
-              boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.1)",
+              boxShadow: darkMode ? "0px 4px 15px rgba(255, 255, 255, 0.1)" : "0px 4px 15px rgba(0, 0, 0, 0.1)",
+              display: selectedTask ? "block" : "none",
+              position: "relative",
             }}
           >
-            {selectedTask ? (
+            {selectedTask && (
               <Card>
                 <IconButton
                   color="error"
@@ -176,9 +164,7 @@ const Dashboard = () => {
                   <CloseIcon />
                 </IconButton>
                 <CardContent>
-                  <Typography variant="h5" gutterBottom>
-                    Task Details
-                  </Typography>
+                  <Typography variant="h5">Task Details</Typography>
                   <Typography><strong>Title:</strong> {selectedTask.title}</Typography>
                   <Typography><strong>Assigned By:</strong> {selectedTask.assignedBy}</Typography>
                   <Typography><strong>Assigned To:</strong> {selectedTask.assignedTo}</Typography>
@@ -186,11 +172,9 @@ const Dashboard = () => {
                   <Typography><strong>Status:</strong> {selectedTask.status}</Typography>
                 </CardContent>
               </Card>
-            ) : (
-              <Typography>Select a task to view details</Typography>
             )}
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
 
         {/* Task Form Modal */}
         <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
