@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, Button, MenuItem, Typography, Snackbar, Alert } from "@mui/material";
 
-const TaskForm = ({ onAdd, loggedInUser }) => {
+const TaskForm = ({ onAdd, loggedInUser, editingTask }) => {
   const [title, setTitle] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
   const [priority, setPriority] = useState("");
@@ -9,8 +9,15 @@ const TaskForm = ({ onAdd, loggedInUser }) => {
   const [error, setError] = useState("");
   const [showSnackbar, setShowSnackbar] = useState(false);
 
-  // Fetch user list dynamically (placeholder for actual fetch)
-  const users = JSON.parse(localStorage.getItem("users"))?.map(user => user.firstname) || [];
+  // Populate form fields when editingTask changes
+  useEffect(() => {
+    if (editingTask) {
+      setTitle(editingTask.title || "");
+      setAssignedTo(editingTask.assignedTo || "");
+      setPriority(editingTask.priority || "");
+      setStatus(editingTask.status || "In-Todo");
+    }
+  }, [editingTask]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,7 +51,7 @@ const TaskForm = ({ onAdd, loggedInUser }) => {
     <>
       <form onSubmit={handleSubmit}>
         <Typography variant="h6" gutterBottom>
-          Create a New Task
+          {editingTask ? "Edit Task" : "Create a New Task"}
         </Typography>
         <TextField
           label="Task Title"
@@ -70,9 +77,9 @@ const TaskForm = ({ onAdd, loggedInUser }) => {
           margin="normal"
           required
         >
-          {users.map((user, index) => (
-            <MenuItem key={index} value={user}>
-              {user}
+          {JSON.parse(localStorage.getItem("users"))?.map((user, index) => (
+            <MenuItem key={index} value={user.firstname}>
+              {user.firstname}
             </MenuItem>
           ))}
         </TextField>
@@ -103,7 +110,7 @@ const TaskForm = ({ onAdd, loggedInUser }) => {
           <MenuItem value="Completed">Completed</MenuItem>
         </TextField>
         <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-          Add Task
+          {editingTask ? "Update Task" : "Add Task"}
         </Button>
       </form>
 

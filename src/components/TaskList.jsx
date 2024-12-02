@@ -12,8 +12,9 @@ import {
 } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from "@mui/icons-material/Edit"; // Import Edit Icon
 
-const TaskList = React.memo(({ tasks = [], onDelete, onApprove, onRowClick, selectedTaskId }) => {
+const TaskList = React.memo(({ tasks = [], onDelete, onApprove, onEdit, onRowClick, selectedTaskId }) => {
   return (
     <TableContainer>
       <Table>
@@ -80,6 +81,17 @@ const TaskList = React.memo(({ tasks = [], onDelete, onApprove, onRowClick, sele
                 </TableCell>
                 <TableCell>{task.status}</TableCell>
                 <TableCell align="center">
+                  <Tooltip title="Edit Task">
+                    <IconButton
+                      color="primary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(task);
+                      }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
                   <Tooltip title="Approve Task">
                     <IconButton
                       color="success"
