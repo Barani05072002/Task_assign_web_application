@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal, Box, Card, CardContent, Typography, Grid, IconButton, AppBar, Toolbar } from "@mui/material";
+import { Button, Modal, Box, Card, CardContent, Typography, IconButton, AppBar, Toolbar } from "@mui/material";
 import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import WbSunnyIcon from "@mui/icons-material/WbSunny"; // Sun Icon for light mode
@@ -80,6 +80,7 @@ const Dashboard = () => {
           display: "flex",
           flexDirection: "column",
           backgroundColor: darkMode ? "#303030" : "#fafafa",
+          margin: 0, // Remove margin for dashboard
         }}
       >
         {/* AppBar */}
@@ -101,17 +102,21 @@ const Dashboard = () => {
             display: "flex",
             width: "100%",
             overflow: "hidden",
+            padding: "16px",
+            margin: 0, // Remove margin for main content as well
           }}
         >
           {/* Left Section: Task List */}
           <Box
             sx={{
               flex: 2,
-              overflowY: "auto",
-              padding: 2,
+              padding: 0, // Remove margin and padding for task list
+              margin: 0,  // Set margin to 0 for task list
               backgroundColor: darkMode ? "#424242" : "#f4f4f4",
               display: "flex",
               flexDirection: "column",
+              overflowY: "auto",  // Added overflow for vertical scrolling
+              overflowX: "auto",  // Added overflow for horizontal scrolling
             }}
           >
             <TaskList
@@ -148,10 +153,12 @@ const Dashboard = () => {
               boxShadow: darkMode ? "0px 4px 15px rgba(255, 255, 255, 0.1)" : "0px 4px 15px rgba(0, 0, 0, 0.1)",
               display: selectedTask ? "block" : "none",
               position: "relative",
+              overflowY: "auto",  // Added overflow for vertical scrolling
+              overflowX: "auto",  // Added overflow for horizontal scrolling
             }}
           >
             {selectedTask && (
-              <Card>
+              <Card sx={{ padding: 2, boxShadow: 4 }}>
                 <IconButton
                   color="error"
                   onClick={handleCloseDetails}
@@ -159,17 +166,42 @@ const Dashboard = () => {
                     position: "absolute",
                     top: 8,
                     right: 8,
+                    zIndex: 1,
                   }}
                 >
                   <CloseIcon />
                 </IconButton>
                 <CardContent>
-                  <Typography variant="h5">Task Details</Typography>
-                  <Typography><strong>Title:</strong> {selectedTask.title}</Typography>
-                  <Typography><strong>Assigned By:</strong> {selectedTask.assignedBy}</Typography>
-                  <Typography><strong>Assigned To:</strong> {selectedTask.assignedTo}</Typography>
-                  <Typography><strong>Priority:</strong> {selectedTask.priority}</Typography>
-                  <Typography><strong>Status:</strong> {selectedTask.status}</Typography>
+                  <Typography variant="h5" sx={{ fontWeight: 'bold', color: darkMode ? "#f5f5f5" : "#333" }}>
+                    Task Details
+                  </Typography>
+                  <Box sx={{ marginTop: 2 }}>
+                    <Typography variant="h6"><strong>Title:</strong> {selectedTask.title}</Typography>
+                    <Typography variant="body1" sx={{ color: darkMode ? "#e0e0e0" : "#555" }}>
+                      <strong>Assigned By:</strong> {selectedTask.assignedBy}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: darkMode ? "#e0e0e0" : "#555" }}>
+                      <strong>Assigned To:</strong> {selectedTask.assignedTo}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: darkMode ? "#e0e0e0" : "#555" }}>
+                      <strong>Priority:</strong> {selectedTask.priority}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: darkMode ? "#e0e0e0" : "#555" }}>
+                      <strong>Status:</strong> {selectedTask.status}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ marginTop: 3 }}>
+                    {selectedTask.status !== "Approved" && (
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleApproveTask(selectedTask.id)}
+                        sx={{ marginTop: 2 }}
+                      >
+                        Approve Task
+                      </Button>
+                    )}
+                  </Box>
                 </CardContent>
               </Card>
             )}
