@@ -24,7 +24,8 @@ const Dashboard = () => {
   const [editingTask, setEditingTask] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
 
-  const loggedInUser = "JohnDoe";
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  const loggedInUser = currentUser?.firstname || 'Guest'; // Fallback to 'Guest' if firstname doesn't exist
 
   const handleToggleDarkMode = () => {
     setDarkMode(!darkMode);

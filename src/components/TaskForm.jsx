@@ -1,131 +1,141 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, MenuItem, Typography, Snackbar, Alert } from "@mui/material";
+import { TextField, Button, Box, MenuItem, Snackbar } from "@mui/material";
 
-const TaskForm = ({ onAdd, loggedInUser, editingTask }) => {
+const TaskForm = ({ onAdd, loggedInUser, task }) => {
   const [title, setTitle] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
-  const [priority, setPriority] = useState("");
-  const [status, setStatus] = useState("In-Todo");
-  const [error, setError] = useState("");
-  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [priority, setPriority] = useState("Low");
+  const [status, setStatus] = useState("In Progress");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState([]);
 
-  // Populate form fields when editingTask changes
   useEffect(() => {
-    if (editingTask) {
-      setTitle(editingTask.title || "");
-      setAssignedTo(editingTask.assignedTo || "");
-      setPriority(editingTask.priority || "");
-      setStatus(editingTask.status || "In-Todo");
+    // Fetch users from localStorage and filter out the logged-in user
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    // Exclude the logged-in user from the list
+    const filtered = users.filter((user) => user.firstname !== loggedInUser);
+    setFilteredUsers(filtered);
+
+    // If we are editing a task, populate the form fields
+    if (task) {
+      setTitle(task.title || "");
+      setAssignedTo(task.assignedTo || "");
+      setPriority(task.priority || "Low");
+      setStatus(task.status || "In Progress");
     }
-  }, [editingTask]);
+  }, [task, loggedInUser]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!title || !assignedTo || !priority) {
-      setError("All fields are required!");
-      setShowSnackbar(true);
+  const handleSubmit = () => {
+    // Basic validation to check if title and assignedTo are filled
+    if (!title || !assignedTo) {
+      setErrorMessage("Title and Assigned To fields are required!");
+      setOpenSnackbar(true);
       return;
     }
 
-    onAdd({
+    // Create a new task with the currently logged-in user as "assignedBy"
+    const newTask = {
       title,
-      assignedBy: loggedInUser,
       assignedTo,
       priority,
       status,
-    });
+      assignedBy: loggedInUser, // Set the logged-in user as "assignedBy"
+    };
 
-    // Reset form fields after submission
-    setTitle("");
-    setAssignedTo("");
-    setPriority("");
-    setStatus("In-Todo");
+    onAdd(newTask); // Pass the new task to the parent
+    resetForm(); // Reset the form fields after submission
   };
 
-  const handleCloseSnackbar = () => {
-    setShowSnackbar(false);
+  const resetForm = () => {
+    setTitle("");
+    setAssignedTo("");
+    setPriority("Low");
+    setStatus("In Progress");
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <Typography variant="h6" gutterBottom>
-          {editingTask ? "Edit Task" : "Create a New Task"}
-        </Typography>
-        <TextField
-          label="Task Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          fullWidth
-          margin="normal"
-          required
-        />
-        <TextField
-          label="Assigned By"
-          value={loggedInUser}
-          disabled
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          select
-          label="Assigned To"
-          value={assignedTo}
-          onChange={(e) => setAssignedTo(e.target.value)}
-          fullWidth
-          margin="normal"
-          required
-        >
-          {JSON.parse(localStorage.getItem("users"))?.map((user, index) => (
+    <Box>
+      {/* Task Title Field */}
+      <TextField
+        label="Task Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        fullWidth
+        margin="normal"
+        required
+      />
+
+      {/* Assigned To Field (Dropdown, excluding the logged-in user) */}
+      <TextField
+        select
+        label="Assigned To"
+        value={assignedTo}
+        onChange={(e) => setAssignedTo(e.target.value)}
+        fullWidth
+        margin="normal"
+        required
+      >
+        {filteredUsers.length > 0 ? (
+          filteredUsers.map((user, index) => (
             <MenuItem key={index} value={user.firstname}>
               {user.firstname}
             </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          select
-          label="Priority"
-          value={priority}
-          onChange={(e) => setPriority(e.target.value)}
-          fullWidth
-          margin="normal"
-          required
-        >
-          <MenuItem value="High">High</MenuItem>
-          <MenuItem value="Medium">Medium</MenuItem>
-          <MenuItem value="Low">Low</MenuItem>
-        </TextField>
-        <TextField
-          select
-          label="Status"
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          fullWidth
-          margin="normal"
-        >
-          <MenuItem value="In-Todo">In-Todo</MenuItem>
-          <MenuItem value="Pending">Pending</MenuItem>
-          <MenuItem value="In Progress">In Progress</MenuItem>
-          <MenuItem value="Completed">Completed</MenuItem>
-        </TextField>
-        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-          {editingTask ? "Update Task" : "Add Task"}
-        </Button>
-      </form>
+          ))
+        ) : (
+          <MenuItem value="" disabled>
+            No available users
+          </MenuItem>
+        )}
+      </TextField>
 
-      {/* Snackbar for error feedback */}
-      <Snackbar
-        open={showSnackbar}
-        autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      {/* Priority Dropdown */}
+      <TextField
+        select
+        label="Priority"
+        value={priority}
+        onChange={(e) => setPriority(e.target.value)}
+        fullWidth
+        margin="normal"
       >
-        <Alert onClose={handleCloseSnackbar} severity="error" variant="filled">
-          {error}
-        </Alert>
-      </Snackbar>
-    </>
+        <MenuItem value="Low">Low</MenuItem>
+        <MenuItem value="Medium">Medium</MenuItem>
+        <MenuItem value="High">High</MenuItem>
+      </TextField>
+
+      {/* Status Dropdown */}
+      <TextField
+        select
+        label="Status"
+        value={status}
+        onChange={(e) => setStatus(e.target.value)}
+        fullWidth
+        margin="normal"
+      >
+        <MenuItem value="In Progress">In Progress</MenuItem>
+        <MenuItem value="Pending">Pending</MenuItem>
+        <MenuItem value="Completed">Completed</MenuItem>
+      </TextField>
+
+      {/* Submit Button */}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSubmit}
+        fullWidth
+        sx={{ marginTop: 2 }}
+      >
+        {task ? "Update Task" : "Add Task"}
+      </Button>
+
+      {/* Snackbar for Error Messages */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+        message={errorMessage}
+      />
+    </Box>
   );
 };
 
