@@ -108,7 +108,7 @@ const Dashboard = () => {
             display: "flex",
             width: "100%",
             overflow: "hidden",
-            padding: "16px",
+            padding: 0, // Remove unnecessary inner padding
           }}
         >
           {/* Left Section: Task List */}
