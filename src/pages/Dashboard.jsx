@@ -251,7 +251,6 @@ const Dashboard = () => {
                     >
                       Delete
                     </Button>
-
                     {/* Approve Button (Only if not Completed) */}
                     {selectedTask.status !== "Completed" && (
                       <Button
@@ -310,5 +309,4 @@ const Dashboard = () => {
     </ThemeProvider>
   );
 };
-
 export default Dashboard;
