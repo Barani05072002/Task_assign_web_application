@@ -4,13 +4,23 @@ import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = JSON.parse(localStorage.getItem("isAuthenticated")) || false;
+  const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
 
   if (!isAuthenticated) {
-    // Redirect to login with a state message
     return <Navigate to="/" state={{ message: "Please log in to access this page." }} />;
   }
 
-  // If authenticated, render the children
+  // Role-based redirection
+  const { role } = currentUser;
+
+  if (role === "Admin" && window.location.pathname !== "/home") {
+    return <Navigate to="/home" />;
+  }
+
+  if (role === "Employer" && window.location.pathname !== "/employeehome") {
+    return <Navigate to="/employeehome" />;
+  }
+
   return children;
 };
 

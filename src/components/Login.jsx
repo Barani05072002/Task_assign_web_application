@@ -9,14 +9,16 @@ import {
   DialogContent,
   DialogTitle,
   Container,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [error, setError] = useState(null);
-  const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -25,13 +27,14 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const { email, password } = formData;
 
     // Validate input
     if (!email || !password) {
-      setDialogMessage("Both email and password are required.");
-      setOpenDialog(true);
+      setSnackbar({ open: true, message: "Both email and password are required.", severity: "error" });
+      setLoading(false);
       return;
     }
 
@@ -40,31 +43,30 @@ const Login = () => {
     const existingUser = users.find((user) => user.email === email);
 
     if (!existingUser) {
-      setDialogMessage("User does not exist. Please sign up.");
-      setOpenDialog(true);
+      setSnackbar({ open: true, message: "User does not exist. Please sign up.", severity: "error" });
+      setLoading(false);
       return;
     }
 
     if (existingUser.password !== password) {
-      setDialogMessage("Incorrect password. Please try again.");
-      setOpenDialog(true);
+      setSnackbar({ open: true, message: "Incorrect password. Please try again.", severity: "error" });
+      setLoading(false);
       return;
     }
 
     // Successful login
     localStorage.setItem("isAuthenticated", "true");
     localStorage.setItem("currentUser", JSON.stringify(existingUser));
-    setIsSuccess(true);
-    setDialogMessage("Login successful! Redirecting to the dashboard...");
-    setOpenDialog(true);
+    setSnackbar({ open: true, message: "Login successful! Redirecting to the dashboard...", severity: "success" });
 
     setTimeout(() => {
+      setLoading(false);
       navigate("/home");
     }, 2000);
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -137,8 +139,9 @@ const Login = () => {
               borderRadius: "8px",
               "&:hover": { backgroundColor: "#304ffe" },
             }}
+            disabled={loading}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </Button>
         </form>
         <Typography
@@ -157,17 +160,17 @@ const Login = () => {
           </Button>
         </Typography>
 
-        <Dialog open={openDialog} onClose={handleCloseDialog}>
-          <DialogTitle>{isSuccess ? "Success" : "Error"}</DialogTitle>
-          <DialogContent>
-            <Typography>{dialogMessage}</Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDialog} color="primary">
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
+        {/* Snackbar for feedback */}
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </Container>
     </div>
   );

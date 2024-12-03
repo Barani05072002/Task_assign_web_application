@@ -4,6 +4,7 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Dashboard from "./pages/Tasks";
 import HomePage from "./pages/HomePage";
+import EmployeeHomePage from "./pages/EmployeeHomePage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
@@ -13,7 +14,22 @@ const App = () => {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/home" element={<ProtectedRoute><HomePage/></ProtectedRoute>} />
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/employeehome"
+          element={
+            <ProtectedRoute>
+              <EmployeeHomePage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

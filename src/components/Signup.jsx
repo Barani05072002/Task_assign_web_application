@@ -1,5 +1,21 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Link } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Link,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Snackbar,
+  Alert,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const SignUpForm = () => {
@@ -8,12 +24,13 @@ const SignUpForm = () => {
     lastname: '',
     email: '',
     password: '',
-    role: ''
+    role: '',
   });
 
   const navigate = useNavigate(); // Initialize navigate
   const [openDialog, setOpenDialog] = useState(false); // State to control dialog visibility
   const [dialogMessage, setDialogMessage] = useState(''); // State to store the message for the dialog
+  const [successSnackbar, setSuccessSnackbar] = useState(false); // State to show success message
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,7 +50,7 @@ const SignUpForm = () => {
 
     // Check if the user already exists
     const users = JSON.parse(localStorage.getItem('users')) || [];
-    const userExists = users.some(user => user.email === formData.email);
+    const userExists = users.some((user) => user.email === formData.email);
 
     if (userExists) {
       setDialogMessage('User already exists!');
@@ -45,7 +62,7 @@ const SignUpForm = () => {
         lastname: formData.lastname,
         email: formData.email,
         password: formData.password,
-        role: formData.role
+        role: formData.role,
       };
 
       // Save the user to localStorage
@@ -58,16 +75,23 @@ const SignUpForm = () => {
         lastname: '',
         email: '',
         password: '',
-        role: ''
+        role: '',
       });
 
-      // After successful registration, redirect to login page
+      // Show success message
+      setSuccessSnackbar(true);
+
+      // Redirect to login page after a delay
       setTimeout(() => navigate('/'), 2000);
     }
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false); // Close the dialog
+  };
+
+  const handleCloseSnackbar = () => {
+    setSuccessSnackbar(false); // Close the Snackbar
   };
 
   return (
@@ -177,24 +201,25 @@ const SignUpForm = () => {
             },
           }}
         />
-        <TextField
-          label="Role"
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          sx={{
-            '& .MuiInputBase-root': {
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Role</InputLabel>
+          <Select
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            variant="outlined"
+            sx={{
               borderRadius: '20px',
               backgroundColor: '#f9f9f9',
               '&:hover': {
                 backgroundColor: '#f1f1f1',
               },
-            },
-          }}
-        />
+            }}
+          >
+            <MenuItem value="Admin">Admin</MenuItem>
+            <MenuItem value="Employer">Employer</MenuItem>
+          </Select>
+        </FormControl>
         <Button
           variant="contained"
           color="primary"
@@ -233,6 +258,18 @@ const SignUpForm = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Snackbar for success message */}
+      <Snackbar
+        open={successSnackbar}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          New user created successfully!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
