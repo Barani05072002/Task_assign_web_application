@@ -1,10 +1,31 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Box, Typography, Container } from "@mui/material";
 import TaskAltIcon from "@mui/icons-material/TaskAlt"; // Icon for completed tasks
 import PendingActionsIcon from "@mui/icons-material/PendingActions"; // Icon for pending tasks
 import AssignmentIcon from "@mui/icons-material/Assignment"; // Icon for total tasks
 
-const Dashboard = ({ totalTasks, completedTasks, pendingTasks }) => {
+const Dashboard = () => {
+  const [taskCounts, setTaskCounts] = useState({
+    totalTasks: 0,
+    completedTasks: 0,
+    pendingTasks: 0,
+  });
+
+  useEffect(() => {
+    // Fetch tasks from localStorage
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    const completedTasks = tasks.filter(task => task.status === "Completed").length;
+    const pendingTasks = tasks.filter(task => task.status === "Pending").length;
+
+    setTaskCounts({
+      totalTasks: tasks.length,
+      completedTasks,
+      pendingTasks,
+    });
+  }, []); // Run on component mount
+
+  const { totalTasks, completedTasks, pendingTasks } = taskCounts;
+
   return (
     <Box
       sx={{

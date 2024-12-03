@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Box, Button, Typography } from "@mui/material";
 import Dashboard from "./Dashboard"; // Import the Dashboard component
 import Tasks from "./Tasks"; // Import the Tasks component
+import ShowAllUser from "./ShowAllUser";
 
 const HomePage = () => {
   const [currentUser, setCurrentUser] = useState(null); // Store current user
@@ -164,11 +165,7 @@ const HomePage = () => {
             pendingTasks={pendingTasks}
           />
         )}
-        {activeTab === "showAllUsers" && (
-          <Typography variant="h4" sx={{ textAlign: "center", marginTop: "20px" }}>
-            Show All Users Page (Content goes here)
-          </Typography>
-        )}
+        {activeTab === "showAllUsers" && <ShowAllUser />}
       </Box>
     </div>
   );
