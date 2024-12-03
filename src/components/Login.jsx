@@ -59,7 +59,7 @@ const Login = () => {
     setOpenDialog(true);
 
     setTimeout(() => {
-      navigate("/dashboard");
+      navigate("/home");
     }, 2000);
   };
 
