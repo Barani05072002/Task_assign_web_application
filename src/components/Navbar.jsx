@@ -1,25 +1,56 @@
 import React from "react";
-import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import { AppBar, Toolbar, Button, Typography, Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-const Navbar = ({ users, onFilterTasks, onShowAllTasks, currentUser }) => {
+const Navbar = ({ currentUser, onFilterTasks, onShowAllTasks, users }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("currentUser");
+    navigate("/");
+  };
+
   return (
-    <AppBar position="static">
-      <Toolbar style={{ justifyContent: "space-between" }}>
-        <Typography variant="h6">Task Assignment App</Typography>
-        <div>
-          {users.map((user) => (
-            <Button
-              key={user.id}
-              color={user.id === currentUser ? "secondary" : "inherit"}
-              onClick={() => onFilterTasks(user.id)}
+    <AppBar position="static" color="primary">
+      <Toolbar>
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          Task Manager
+        </Typography>
+        <Box>
+          {currentUser && (
+            <Typography
+              variant="body1"
+              sx={{
+                display: "inline",
+                marginRight: 2,
+                fontWeight: "bold",
+                color: "#fff",
+              }}
             >
-              {user.email}
-            </Button>
-          ))}
-          <Button color="inherit" onClick={onShowAllTasks}>
+              Welcome, {currentUser.firstname || "User"}
+            </Typography>
+          )}
+          <Button
+            color="inherit"
+            onClick={() => onShowAllTasks()}
+            sx={{ marginRight: 2 }}
+          >
             Show All Tasks
           </Button>
-        </div>
+          <Button
+            color="inherit"
+            onClick={handleLogout}
+            sx={{
+              backgroundColor: "rgba(255, 255, 255, 0.2)",
+              "&:hover": {
+                backgroundColor: "rgba(255, 255, 255, 0.3)",
+              },
+            }}
+          >
+            Logout
+          </Button>
+        </Box>
       </Toolbar>
     </AppBar>
   );

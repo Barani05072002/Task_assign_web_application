@@ -1,21 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Modal,
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  IconButton,
-  AppBar,
-  Toolbar,
-} from "@mui/material";
-import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
+import { Box, Button, Modal, IconButton, Card, CardContent, Typography } from "@mui/material";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
-import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import NightlightIcon from "@mui/icons-material/Nightlight";
 import TaskList from "../components/TaskList";
 import TaskForm from "../components/TaskForm";
+import Navbar from "../components/Navbar"; // Import Navbar component
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -109,17 +98,8 @@ const Dashboard = () => {
           margin: 0,
         }}
       >
-        {/* AppBar */}
-        <AppBar position="sticky">
-          <Toolbar>
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              Dashboard
-            </Typography>
-            <IconButton color="inherit" onClick={handleToggleDarkMode}>
-              {darkMode ? <WbSunnyIcon /> : <NightlightIcon />}
-            </IconButton>
-          </Toolbar>
-        </AppBar>
+        {/* Navbar Component */}
+        <Navbar darkMode={darkMode} onToggleDarkMode={handleToggleDarkMode} />
 
         {/* Main Content */}
         <Box
