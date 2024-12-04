@@ -17,6 +17,15 @@ import EditIcon from "@mui/icons-material/Edit"; // Import Edit Icon
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 
 const TaskList = React.memo(({ tasks = [], onDelete, onApprove, onEdit, onRowClick, selectedTaskId }) => {
+  const handleApprove = (task) => {
+    // If task status is "Completed", revert to previous status
+    if (task.status === "Completed") {
+      onApprove(task.id, task.previousStatus); // Assuming `onApprove` can accept both ID and the previous status
+    } else {
+      onApprove(task.id, "Completed"); // Mark as completed
+    }
+  };
+
   return (
     <div style={{ margin: 0, overflow: "hidden" }}> {/* Set outer margin to 0 */}
       <TableContainer sx={{ maxHeight: "70vh", overflowY: "auto" }}>
@@ -104,10 +113,10 @@ const TaskList = React.memo(({ tasks = [], onDelete, onApprove, onEdit, onRowCli
                         color="success"
                         onClick={(e) => {
                           e.stopPropagation();
-                          onApprove(task.id);
+                          handleApprove(task); // Use the new approve handler
                         }}
                       >
-                        {task.status === 'Completed' ? <DoNotDisturbOnIcon /> : <CheckCircleOutlineIcon />}
+                        {task.status === "Completed" ? <DoNotDisturbOnIcon /> : <CheckCircleOutlineIcon />}
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Delete Task">

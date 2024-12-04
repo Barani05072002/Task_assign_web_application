@@ -67,12 +67,14 @@ const Tasks = () => {
 
   const handleApproveTask = (taskId) => {
     const updatedTasks = tasks.map((task) =>
-      task.id === taskId ? { ...task, status: "Completed" } : task
+      task.id === taskId
+        ? { ...task, status: task.status === "Completed" ? "In Progress" : "Completed" }
+        : task
     );
     setTasks(updatedTasks);
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
   };
-
+  
   const handleEditTask = (task) => {
     setEditingTask(task); // Set task to be edited
     setIsModalOpen(true); // Open modal to edit
