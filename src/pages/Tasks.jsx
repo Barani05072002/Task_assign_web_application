@@ -233,6 +233,15 @@ const Tasks = () => {
                     >
                       <strong>Status:</strong> {selectedTask.status}
                     </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        marginBottom: 2,
+                        color: darkMode ? "#e0e0e0" : "#555",
+                      }}
+                    >
+                      <strong>Request:</strong> {selectedTask.request || "No request..."}
+                    </Typography>
                   </Box>
 
                   <Box sx={{ display: "flex", gap: 2, marginTop: 3 }}>
