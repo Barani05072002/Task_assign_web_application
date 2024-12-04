@@ -9,10 +9,12 @@ import {
   IconButton,
   Tooltip,
   Typography,
+  Box,
 } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit"; // Import Edit Icon
+import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 
 const TaskList = React.memo(({ tasks = [], onDelete, onApprove, onEdit, onRowClick, selectedTaskId }) => {
   return (
@@ -62,7 +64,8 @@ const TaskList = React.memo(({ tasks = [], onDelete, onApprove, onEdit, onRowCli
                   style={{
                     cursor: "pointer",
                     backgroundColor: selectedTaskId === task.id ? "#e3f2fd" : "white",
-                    transition: "background-color 0.3s ease",
+                    transition: "background-color 0.3s ease, box-shadow 0.3s ease",
+                    boxShadow: selectedTaskId === task.id ? "0px 4px 8px rgba(0, 0, 0, 0.1)" : "none",
                   }}
                   onMouseEnter={(e) => (e.target.closest("tr").style.backgroundColor = "#f5f5f5")}
                   onMouseLeave={(e) => (e.target.closest("tr").style.backgroundColor = selectedTaskId === task.id ? "#e3f2fd" : "white")}
@@ -71,14 +74,17 @@ const TaskList = React.memo(({ tasks = [], onDelete, onApprove, onEdit, onRowCli
                   <TableCell>{task.assignedBy}</TableCell>
                   <TableCell>{task.assignedTo}</TableCell>
                   <TableCell>
-                    <Typography
+                    <Box
                       sx={{
-                        color: task.priority === "High" ? "red" : task.priority === "Medium" ? "orange" : "green",
+                        backgroundColor: task.priority === "High" ? "red" : task.priority === "Medium" ? "orange" : "green",
+                        color: "white",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
                         fontWeight: "bold",
                       }}
                     >
                       {task.priority}
-                    </Typography>
+                    </Box>
                   </TableCell>
                   <TableCell>{task.status}</TableCell>
                   <TableCell align="center">
@@ -101,7 +107,7 @@ const TaskList = React.memo(({ tasks = [], onDelete, onApprove, onEdit, onRowCli
                           onApprove(task.id);
                         }}
                       >
-                        <CheckCircleOutlineIcon />
+                        {task.status === 'Completed' ? <DoNotDisturbOnIcon /> : <CheckCircleOutlineIcon />}
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Delete Task">
