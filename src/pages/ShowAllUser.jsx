@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const ShowAllUser = () => {
   const [users, setUsers] = useState([]);
@@ -7,8 +8,19 @@ const ShowAllUser = () => {
   useEffect(() => {
     // Fetch users from localStorage
     const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
-    setUsers(storedUsers);
+    const employers = storedUsers.filter((user) => user.role === "Employer");
+    setUsers(employers);
   }, []);
+  
+
+  const handleDeleteUser = (userId) => {
+    // Remove user from the list
+    const updatedUsers = users.filter((user) => user.email !== userId.email);
+    setUsers(updatedUsers);
+
+    // Update localStorage with the new user list
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+  };
 
   return (
     <Paper sx={{ width: "100%", height: "100vh", overflow: "hidden", margin: 0, backgroundColor: "#f7f7f7" }}>
@@ -33,6 +45,7 @@ const ShowAllUser = () => {
               <TableCell sx={{ fontWeight: "bold", color: "white", textAlign: "center" }}>Last Name</TableCell>
               <TableCell sx={{ fontWeight: "bold", color: "white", textAlign: "center" }}>Email</TableCell>
               <TableCell sx={{ fontWeight: "bold", color: "white", textAlign: "center" }}>Role</TableCell>
+              <TableCell sx={{ fontWeight: "bold", color: "white", textAlign: "center" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -51,11 +64,16 @@ const ShowAllUser = () => {
                   <TableCell sx={{ textAlign: "center", padding: "12px" }}>{user.lastname}</TableCell>
                   <TableCell sx={{ textAlign: "center", padding: "12px" }}>{user.email}</TableCell>
                   <TableCell sx={{ textAlign: "center", padding: "12px" }}>{user.role}</TableCell>
+                  <TableCell sx={{ textAlign: "center", padding: "12px" }}>
+                    <IconButton color="error" onClick={() => handleDeleteUser(user)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} sx={{ textAlign: "center", fontWeight: "bold", color: "#e74c3c", padding: "20px" }}>
+                <TableCell colSpan={5} sx={{ textAlign: "center", fontWeight: "bold", color: "#e74c3c", padding: "20px" }}>
                   No users found.
                 </TableCell>
               </TableRow>
